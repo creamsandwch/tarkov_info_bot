@@ -1,0 +1,9 @@
+# virtual env files
+/venv
+.venv
+
+# tokens
+.env
+
+# python cache
+/__pycache__
