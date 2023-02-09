@@ -1,12 +1,14 @@
 import requests
 import datetime
 
+from .. import settings
+
 
 def run_query(query: str) -> str:
     """Базовая функция для запроса к GraphQL API"""
     headers = {"Content-Type": "application/json"}
     response = requests.post(
-        'https://api.tarkov.dev/graphql',
+        settings.ENDPOINT,
         headers=headers,
         json={'query': query}
     )
