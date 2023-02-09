@@ -2,7 +2,6 @@ import os
 import logging
 import sys
 
-import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from dotenv import load_dotenv
 
@@ -47,28 +46,23 @@ def standard_response(update, context):
     )
 
 
-def send_msg(bot: telegram.Bot, message: str, chat_id: str = ADMIN_CHAT_ID):
-    """Отправляет сообщение от бота. Отправляет в чат админу - по умолчанию."""
-    try:
-        bot.send_message(chat_id=chat_id, text=message)
-        logging.debug('Бот отправил сообщение.')
-    except Exception as error:
-        logging.error(f'{error}: ошибка при отправке сообщения ботом.')
-
-
 def send_item_price(update, context):
     """Команда запроса цены предмета по его имени."""
     chat = update.effective_chat
     try:
         context.args[0]
         item_name = ' '.join(context.args)
-        item_price_response = item_funcs.get_item_avgprice_by_name(item_name)
+
+        item_price_response = item_funcs.get_item_avgprice_by_name(
+            item_name,
+        )
+
         context.bot.send_message(chat_id=chat.id, text=item_price_response)
         logging.info('Бот отправил сообщение с ценой о предмете.')
     except (IndexError, ValueError):
         context.bot.send_message(
             chat_id=chat.id,
-            text='There is no item name to search for.'
+            text=f'Бот не нашел ни одного предмета по запросу "{item_name}".'
         )
         logging.info(
             f'Бот не нашел ни одного предмета по запросу "{item_name}"'

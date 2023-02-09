@@ -2,10 +2,13 @@ from dateutil import parser as dt_parser
 from datetime import datetime, timezone
 
 from function_modules.example import run_query, timedelta_formatter
-from bot_settings.settings import QUERY_LANG
+from bot_settings import settings
 
 
-def get_item_avgprice_by_name(item_name: str) -> str:
+def get_item_avgprice_by_name(
+    item_name: str,
+    language: str = settings.QUERY_LANG
+) -> str:
     query = """
     query {{
         items(name: "{0}", lang: {1}) {{
@@ -14,7 +17,7 @@ def get_item_avgprice_by_name(item_name: str) -> str:
             avg24hPrice
         }}
     }}
-    """.format(item_name, QUERY_LANG)
+    """.format(item_name, language)
 
     response = run_query(query)
 
