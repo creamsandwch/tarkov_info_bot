@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from function_modules.example import run_query, timedelta_formatter
 
 
-def get_item_avgprice_by_name(item_name):
+def get_item_avgprice_by_name(item_name: str) -> str:
     query = """
     query {{
         items(name: "{0}") {{
@@ -31,7 +31,7 @@ def get_item_avgprice_by_name(item_name):
         )
         hours, minutes = timedelta_formatter(updated)
 
-        avg24hprice = item_fields.get('avg24hPrice')
+        avg24hprice = map(int, item_fields.get('avg24hPrice'))
     except KeyError:
         return (response['errors']).message
 
@@ -41,6 +41,9 @@ def get_item_avgprice_by_name(item_name):
     )
 
 
+def main():
+    pass
+
+
 if __name__ == '__main__':
-    name = input('Введите название предмета: ')
-    print(get_item_avgprice_by_name(name))
+    pass

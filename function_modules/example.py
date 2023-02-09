@@ -1,7 +1,7 @@
 import requests
 import datetime
 
-from .. import settings
+from bot_settings import settings
 
 
 def run_query(query: str) -> str:
