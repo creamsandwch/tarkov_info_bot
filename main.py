@@ -60,11 +60,17 @@ def send_item_price(update, context):
     """Команда запроса цены предмета по его имени."""
     chat = update.effective_chat
     try:
+        context.args[0]
         item_name = ' '.join(context.args)
         item_price_response = item_funcs.get_item_avgprice_by_name(item_name)
         context.bot.send_message(chat_id=chat.id, text=item_price_response)
+        logging.info('Бот отправил сообщение с ценой о предмете.')
     except (IndexError, ValueError):
-        context.bot.send_message('There is no item name to search for.')
+        context.bot.send_message(
+            chat_id=chat.id,
+            text='There is no item name to search for.'
+        )
+        logging.info(f'Бот не нашел ни одного премеда по запросу {item_name}')
 
 
 def main():

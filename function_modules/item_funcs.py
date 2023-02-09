@@ -29,15 +29,20 @@ def get_item_avgprice_by_name(item_name: str) -> str:
             datetime.now().astimezone(timezone.utc)
             - updated_dt_parsed.astimezone(timezone.utc)
         )
-        hours, minutes = timedelta_formatter(updated)
+        hours, minutes = map(int, timedelta_formatter(updated))
 
-        avg24hprice = map(int, item_fields.get('avg24hPrice'))
+        avg24hprice = item_fields.get('avg24hPrice')
+
+        if avg24hprice == 0:
+            return (
+                f"{item_name} не продается на барахолке."
+            )
     except KeyError:
         return (response['errors']).message
 
     return (
-        f'{item_name} price is {avg24hprice}. '
-        f'Updated {hours}h, {minutes}m ago.'
+        f'{item_name} стоит {avg24hprice}. '
+        f'Обновлено {hours}ч {minutes}m назад.'
     )
 
 
