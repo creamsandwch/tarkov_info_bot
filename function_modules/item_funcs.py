@@ -42,7 +42,7 @@ def get_item_avgprice_by_name(item_name: str) -> str:
 
     return (
         f'{item_name} стоит {avg24hprice}. '
-        f'Обновлено {hours}ч {minutes}m назад.'
+        f'Обновлено {hours}ч {minutes}м назад.'
     )
 
 
