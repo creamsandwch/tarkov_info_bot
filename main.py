@@ -70,7 +70,9 @@ def send_item_price(update, context):
             chat_id=chat.id,
             text='There is no item name to search for.'
         )
-        logging.info(f'Бот не нашел ни одного премеда по запросу {item_name}')
+        logging.info(
+            f'Бот не нашел ни одного предмета по запросу "{item_name}"'
+        )
 
 
 def main():
@@ -89,7 +91,8 @@ def main():
             Filters.text, standard_response
         )
     )
-    updater.start_polling()
+    updater.start_polling(poll_interval=10)
+    updater.idle()
 
 
 if __name__ == '__main__':
