@@ -25,10 +25,10 @@ def sell_price_finder(item: dict) -> str:
             best_sell_currency = sell_currency
 
     return (
-        f'Продать:\n'
+        f'Продать:\n\n'
         f'{best_sell_name} за '
         f"{'{0:,}'.format(best_sell_price).replace(',', ' ')} "
-        f"{best_sell_currency}.\n"
+        f"{best_sell_currency}.\n\n"
     )
 
 
@@ -54,10 +54,10 @@ def buy_price_finder(item: dict) -> str:
             best_buy_currency = buyfor_currency
 
     return (
-        f'Купить:\n'
+        f'Купить:\n\n'
         f"{best_buy_name} за "
         f"{'{0:,}'.format(best_buy_price).replace(',', ' ')} "
-        f"{best_buy_currency}.\n"
+        f"{best_buy_currency}.\n\n"
     )
 
 
