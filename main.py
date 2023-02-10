@@ -31,12 +31,11 @@ logging.basicConfig(
 
 load_dotenv()
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-ADMIN_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
 
 def check_tokens():
     '''Проверяет доступность токенов.'''
-    return all([BOT_TOKEN, ADMIN_CHAT_ID])
+    return BOT_TOKEN
 
 
 def standard_response(update, context):
