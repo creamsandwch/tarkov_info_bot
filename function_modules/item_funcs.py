@@ -25,7 +25,7 @@ def sell_price_finder(item: dict) -> str:
             best_sell_currency = sell_currency
 
     return (
-        f'Продать:\n\n'
+        f'Продать:\n'
         f'{best_sell_name} за '
         f"{'{0:,}'.format(best_sell_price).replace(',', ' ')} "
         f"{best_sell_currency}.\n\n"
@@ -54,7 +54,7 @@ def buy_price_finder(item: dict) -> str:
             best_buy_currency = buyfor_currency
 
     return (
-        f'Купить:\n\n'
+        f'Купить:\n'
         f"{best_buy_name} за "
         f"{'{0:,}'.format(best_buy_price).replace(',', ' ')} "
         f"{best_buy_currency}.\n\n"
@@ -123,7 +123,7 @@ def get_item_avgprice_by_name(
         return f'Не найдено ни одного предмета по запросу {item_name}.'
 
     return (
-        f'{found_name}.\n'
+        f'{found_name}.\n\n'
         f'{best_prices_output}'
         f'Обновлено {hours}ч {minutes}м назад.'
     )
