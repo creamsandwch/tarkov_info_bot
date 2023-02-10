@@ -1,32 +1,115 @@
 from dateutil import parser as dt_parser
 from datetime import datetime, timezone
 
+from function_modules import exceptions
 from function_modules.example import run_query, timedelta_formatter
 from bot_settings import settings
+
+
+def sell_price_finder(item: dict) -> str:
+    """Находит лучшую цену на продажу предмета
+    по стандартизированному запросу к API."""
+
+    sell_for_list: list = item.get('sellFor')
+
+    best_sell_price = 0
+
+    for sellfor_obj in sell_for_list:
+        sell_name = (sellfor_obj.get('vendor')).get('name')
+        sell_price = sellfor_obj.get('price')
+        sell_currency = sellfor_obj.get('currency')
+
+        if sell_price >= best_sell_price:
+            best_sell_name = sell_name
+            best_sell_price = sell_price
+            best_sell_currency = sell_currency
+
+    return (
+        f'Продать:\n'
+        f'{best_sell_name} за '
+        f"{'{0:,}'.format(best_sell_price).replace(',', ' ')} "
+        f"{best_sell_currency}.\n"
+    )
+
+
+def buy_price_finder(item: dict) -> str:
+    """Находит лучшую цену на покупку предмета
+    по стандартизированному запросу к API."""
+
+    buyfor_list: list = item.get('buyFor')
+
+    if buyfor_list == []:
+        return 'Данный предмет нельзя купить.'
+
+    best_buy_price = buyfor_list[0].get('price')
+
+    for buyfor_obj in buyfor_list:
+        buy_name = ((buyfor_obj).get('vendor')).get('name')
+        buy_price = buyfor_obj.get('price')
+        buyfor_currency = buyfor_obj.get('currency')
+
+        if buy_price <= best_buy_price:
+            best_buy_name = buy_name
+            best_buy_price = buy_price
+            best_buy_currency = buyfor_currency
+
+    return (
+        f'Купить:\n'
+        f"{best_buy_name} за "
+        "{'{0:,}'.format(best_buy_price).replace(',', ' ')} "
+        f"{best_buy_currency}.\n"
+    )
 
 
 def get_item_avgprice_by_name(
     item_name: str,
     language: str = settings.QUERY_LANG
 ) -> str:
-    query = """
-    query {{
-        items(name: "{0}", lang: {1}) {{
-            name
-            updated
-            avg24hPrice
-        }}
-    }}
-    """.format(item_name, language)
+    """Возвращает сообщение о цене предмета,
+    либо о результатах неудачного поиска по имени."""
+
+    query = (
+        """query {{
+            items(name: "{0}", lang: {1}) {{
+                name
+                updated
+                avg24hPrice
+                sellFor {{
+                    vendor {{
+                        name
+                    }}
+                    price
+                    currency
+                }}
+                buyFor {{
+                    vendor {{
+                        name
+                    }}
+                price
+                currency
+                }}
+            }}
+        }}""".format(item_name, language)
+    )
 
     response = run_query(query)
 
     try:
         data = response.get('data')
-        items_list = data.get('items')
-        item_fields = items_list[0]
+        items = data.get('items')
+        if items == []:
+            raise exceptions.NoItemFound
+        elif len(items) > 1:
+            raise exceptions.MoreThatOneItemFound
 
-        updated = item_fields.get('updated')
+        item = items[0]
+        found_name = item.get('name')
+
+        best_prices_output: str = (
+            sell_price_finder(item) + buy_price_finder(item)
+        )
+
+        updated = item.get('updated')
         updated_dt_parsed = dt_parser.parse(updated)
 
         updated = (
@@ -34,24 +117,45 @@ def get_item_avgprice_by_name(
             - updated_dt_parsed.astimezone(timezone.utc)
         )
         hours, minutes = map(int, timedelta_formatter(updated))
-
-        avg24hprice = item_fields.get('avg24hPrice')
-
-        if avg24hprice == 0:
-            return (
-                f"{item_name} не продается на барахолке."
-            )
     except KeyError:
         return (response['errors']).message
+    except exceptions.NoItemFound:
+        return f'Не найдено ни одного предмета по запросу {item_name}.'
 
     return (
-        f'{str.capitalize(item_name)} стоит {avg24hprice}р. '
+        f'{found_name}.\n'
+        f'{best_prices_output}'
         f'Обновлено {hours}ч {minutes}м назад.'
     )
 
 
-def main():
-    pass
+def get_eft_service_status():
+    """Возвращает ответ от API в виде списка со словарями
+    статусов сервисов EFT."""
+
+    query = (
+        """query {
+            status {
+                currentStatuses {
+                    name
+                    message
+                    status
+                    statusCode
+                }
+            }
+        }"""
+    )
+
+    response = run_query(query)
+
+    try:
+        data = response.get('data')
+        status = data.get('status')
+        current_statuses = status.get('currentStatuses')
+    except KeyError:
+        return response['errors'].message
+
+    return current_statuses
 
 
 if __name__ == '__main__':
