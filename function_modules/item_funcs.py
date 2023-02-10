@@ -56,7 +56,7 @@ def buy_price_finder(item: dict) -> str:
     return (
         f'Купить:\n'
         f"{best_buy_name} за "
-        "{'{0:,}'.format(best_buy_price).replace(',', ' ')} "
+        f"{'{0:,}'.format(best_buy_price).replace(',', ' ')} "
         f"{best_buy_currency}.\n"
     )
 

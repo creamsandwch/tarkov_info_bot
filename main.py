@@ -146,7 +146,7 @@ def main():
         MessageHandler(Filters.text, standard_response)
     )
 
-    updater.start_polling(poll_interval=10)
+    updater.start_polling(poll_interval=15)
     updater.idle()
 
 

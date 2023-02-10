@@ -12,3 +12,8 @@ __pycache__
 
 # logs
 *.log
+
+# acrhives
+*.rar
+*.zip
+*.7z
