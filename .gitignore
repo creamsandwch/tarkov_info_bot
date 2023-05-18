@@ -17,3 +17,6 @@ __pycache__
 *.rar
 *.zip
 *.7z
+
+# manual testing
+*/oop.py
