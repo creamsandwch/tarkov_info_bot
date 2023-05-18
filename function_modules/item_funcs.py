@@ -2,7 +2,7 @@ from dateutil import parser as dt_parser
 from datetime import datetime, timezone
 
 from function_modules import exceptions
-from function_modules.example import run_query, timedelta_formatter
+from function_modules.base_funcs import run_query, timedelta_formatter
 from bot_settings import settings
 
 
